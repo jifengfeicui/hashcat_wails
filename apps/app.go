@@ -3,12 +3,6 @@ package apps
 import (
 	"context"
 	"fmt"
-	"path/filepath"
-
-	"github.com/wailsapp/wails/v2/pkg/runtime"
-
-	"wails_hashcat/global"
-	"wails_hashcat/model"
 )
 
 var (
@@ -32,7 +26,7 @@ func (a *App) Startup(ctx context.Context) {
 }
 
 // DomReady is called after front-end resources have been loaded
-func (a App) DomReady(ctx context.Context) {
+func (a *App) DomReady(ctx context.Context) {
 	// Add your action here
 }
 
@@ -51,25 +45,4 @@ func (a *App) Shutdown(ctx context.Context) {
 // Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
-}
-func (a *App) ChooseFile() string {
-	var err error
-	selectFilePath, err = runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{})
-	if err != nil {
-		return ""
-	}
-	global.SugarLogger.Info(selectFilePath)
-	fileName := filepath.Base(selectFilePath)
-	return fileName
-}
-
-func (a *App) Confirm(fileType string) {
-	fileName := filepath.Base(selectFilePath)
-	db := global.DB
-	var sourceFile = model.SourceHashFile{
-		FileName: fileName,
-		FilePath: selectFilePath,
-		FileType: fileType,
-	}
-	db.Save(&sourceFile)
 }

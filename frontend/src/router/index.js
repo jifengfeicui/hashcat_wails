@@ -1,6 +1,7 @@
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import Add from '../views/Add.vue'
 import Task from "../views/Task.vue";
+import File from "../views/File.vue";
 
 const routes = [
     {
@@ -11,6 +12,11 @@ const routes = [
         path: '/add',
         name: 'Add',
         component: Add
+    },
+    {
+        path: '/file',
+        name: 'File',
+        component: File
     },
     {
         path: '/task',

@@ -6,14 +6,22 @@ export function ChooseFile() {
   return window['go']['apps']['App']['ChooseFile']();
 }
 
-export function Confirm(arg1) {
-  return window['go']['apps']['App']['Confirm'](arg1);
+export function ConfirmAddFile(arg1) {
+  return window['go']['apps']['App']['ConfirmAddFile'](arg1);
 }
 
-export function DomReady(arg1) {
-  return window['go']['apps']['App']['DomReady'](arg1);
+export function CreatTask(arg1) {
+  return window['go']['apps']['App']['CreatTask'](arg1);
+}
+
+export function GetFileList() {
+  return window['go']['apps']['App']['GetFileList']();
 }
 
 export function Greet(arg1) {
   return window['go']['apps']['App']['Greet'](arg1);
+}
+
+export function RemoveFile(arg1) {
+  return window['go']['apps']['App']['RemoveFile'](arg1);
 }

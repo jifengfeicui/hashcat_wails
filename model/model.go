@@ -9,10 +9,10 @@ import (
 )
 
 type MODEL struct {
-	ID        uint           `gorm:"primarykey;AUTO_INCREMENT" ` // 主键ID
-	CreatedAt LocalTime      `json:"created_at"`                 // 创建时间
-	UpdatedAt LocalTime      `json:"-"`                          // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`             // 删除时间
+	ID        uint           `gorm:"primarykey;AUTO_INCREMENT" json:"id" ` // 主键ID
+	CreatedAt LocalTime      `json:"created_at"`                           // 创建时间
+	UpdatedAt LocalTime      `json:"-"`                                    // 更新时间
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`                       // 删除时间
 }
 
 const (
