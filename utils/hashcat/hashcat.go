@@ -35,8 +35,13 @@ func InitTask(session int) {
 }
 
 func (h *HashcatTask) StopTask() {
+	db := global.DB
+	var task model.HashCatTask
+
 	if h.Ctx != nil {
 		h.cancel()
+		db.Where("id = ?", h.Session).First(&task)
+		db.Model(&task).Update("status", model.TaskStatusStop)
 	}
 }
 

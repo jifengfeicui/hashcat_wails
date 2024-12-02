@@ -112,6 +112,7 @@ func (a *App) StopTask(id int) error {
 	}
 	db := global.DB
 	var task model.HashCatTask
+
 	if err := db.Where("id = ?", id).
 		First(&task).Error; err != nil {
 		return err
