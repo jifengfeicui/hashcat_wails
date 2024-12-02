@@ -2,6 +2,7 @@ import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import Add from '../views/Add.vue'
 import Task from "../views/Task.vue";
 import File from "../views/File.vue";
+import Dict from "../views/Dict.vue";
 
 const routes = [
     {
@@ -22,6 +23,11 @@ const routes = [
         path: '/task',
         name: 'Task',
         component: Task
+    },
+    {
+        path: '/dict',
+        name: 'Dict',
+        component: Dict
     }
 ]
 

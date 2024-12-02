@@ -31,11 +31,11 @@ import {AlignHorizontalLeftFilled} from "@vicons/material";
           </router-link>
         </li>
         <li>
-          <router-link to="/task">
+          <router-link to="/dict">
             <n-icon size="40">
               <AlignHorizontalLeftFilled/>
             </n-icon>
-            <span class="nav-text">任务列表</span>
+            <span class="nav-text">密码字典</span>
           </router-link>
         </li>
       </ul>

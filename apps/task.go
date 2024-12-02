@@ -10,6 +10,7 @@ import (
 	"wails_hashcat/model"
 	"wails_hashcat/model/request"
 	service "wails_hashcat/server"
+	"wails_hashcat/utils/hashcat"
 )
 
 func (a *App) CreatTask(req *request.CreateTask) error {
@@ -34,9 +35,9 @@ func (a *App) CreatTask(req *request.CreateTask) error {
 		IncrementMin: req.IncrementMin,
 		IncrementMax: req.IncrementMax,
 		MaskType:     req.MaskType,
+		Status:       model.TaskStatusInit,
 	}
 
-	//hashcat.InitTask(int(sf.ID))
 	cmd += fmt.Sprintf(" %s -a %d ",
 		sf.FilePath, req.AttackMode)
 	switch req.AttackMode {
@@ -62,4 +63,69 @@ func (a *App) CreatTask(req *request.CreateTask) error {
 	err := service.CreateOrUpdateHashCatTask(ht)
 	//go hashcat.HT.StartSession(cmd)
 	return err
+}
+
+func (a *App) DeleteTask(id int) error {
+	db := global.DB
+	var ht model.HashCatTask
+	if err := db.First(&ht, id).Error; err != nil {
+		return err
+	}
+	runningStatus := []model.TaskStatus{model.TaskStatusRunning}
+	if contains(runningStatus, ht.Status) {
+		return errors.New("此状态下不可删除")
+	}
+	if err := db.Delete(&ht).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func contains(slice []model.TaskStatus, value model.TaskStatus) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
+func (a *App) StartTask(id int) error {
+	db := global.DB
+	var task model.HashCatTask
+	if err := db.Preload("File").
+		Where("id = ?", id).
+		First(&task).Error; err != nil {
+		return err
+	}
+	go hashcat.InitTask(int(task.ID))
+	go hashcat.HT.StartSession(task.CMD)
+	db.Model(&task).Update("status", model.TaskStatusRunning)
+	return nil
+}
+func (a *App) StopTask(id int) error {
+	if hashcat.HT != nil {
+		go hashcat.HT.StopTask()
+	}
+	db := global.DB
+	var task model.HashCatTask
+	if err := db.Where("id = ?", id).
+		First(&task).Error; err != nil {
+		return err
+	}
+	db.Model(&task).Update("status", model.TaskStatusStop)
+	return nil
+}
+
+func (a *App) RestartTask(id int) error {
+	hashcat.InitTask(id)
+	go hashcat.HT.ReStartSession()
+	db := global.DB
+	var task model.HashCatTask
+	if err := db.Where("id = ?", id).
+		First(&task).Error; err != nil {
+		return err
+	}
+	db.Model(&task).Update("status", model.TaskStatusRunning)
+	return nil
 }

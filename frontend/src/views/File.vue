@@ -1,17 +1,27 @@
 <script setup>
-import {ref} from "vue";
-import {CreatTask, GetFileList} from "../../wailsjs/go/apps/App";
+import {h, onBeforeUnmount, onMounted, ref} from "vue";
+import {CreatTask, DeleteTask, GetFileList, RestartTask, StartTask, StopTask} from "../../wailsjs/go/apps/App";
 import {AddCircleOutlineRound} from '@vicons/material'
-import {useMessage} from "naive-ui";
+import {NButton, useDialog, useMessage} from "naive-ui";
 
+const dialog = useDialog()
 const message = useMessage()
 const SelectFileID = ref(0)
 const fileList = ref([])
 const columns = [
   {title: "任务号", key: "id"},
-  {title: "状态", key: "status"},
-  {title: "结果", key: "result"},
-  // {title: "输出文件", key: "out_file_path"},
+  {
+    title: "状态", render(row) {
+      return row.status === 1 ? '待开始' :
+          row.status === 2 ? '运行中' :
+              row.status === 3 ? '错误' :
+                  row.status === 4 ? '已停止' :
+                      row.status === 5 ? '已完成' :
+                          '未知';
+    }
+  },
+  {title: "当前进度", key: "current_progress"},
+  {title: "总进度", key: "total_progress"},
   {
     title: "破解类型", key: "attack_mode", render(row) {
       return row.attack_mode === 0 ? '字典' :
@@ -33,28 +43,80 @@ const columns = [
   },
   {title: "最小长度", key: "increment_min"},
   {title: "最大长度", key: "increment_max"},
-  {
-    title: "执行命令", key: "cmd",
-    width: 200,
-    ellipsis: {
-      tooltip: true
-    }
-  },
+  {title: "结果", key: "result"},
   {
     title: 'Action',
     key: 'actions',
-    // render(row) {
-    //   return h(
-    //       NButton,
-    //       {
-    //         strong: true,
-    //         tertiary: true,
-    //         size: 'small',
-    //         // onClick: () => play(row)
-    //       },
-    //       { default: () => 'Play' }
-    //   )
-    // }
+    width: 200,
+    render(row) {
+      const AllButton = []
+      const deleteButton = h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            onClick: () => removeTask(row.id)
+          },
+          {default: () => '删除'},
+      );
+      const startButton = h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            onClick: () => startTask(row.id)
+          },
+          {default: () => '开始'},
+      )
+      const pauseButton = h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            onClick: () => stopTask(row.id)
+          },
+          {default: () => '暂停'},
+      )
+      const continueButton = h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            onClick: () => restartTask(row.id)
+          },
+          {default: () => '继续'},
+      )
+      const restartButton = h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            size: 'small',
+            onClick: () => restartTask(row.id)
+          },
+          {default: () => '重启'},
+      )
+      // AllButton.push(deleteButton)
+      if (row.status === 1) {
+        AllButton.push(startButton)
+        AllButton.push(deleteButton)
+      } else if (row.status === 2) {
+        AllButton.push(pauseButton)
+      } else if (row.status === 3) {
+        AllButton.push(restartButton)
+        AllButton.push(deleteButton)
+      } else if (row.status === 4) {
+        AllButton.push(continueButton)
+        AllButton.push(deleteButton)
+      } else if (row.status === 5) {
+        AllButton.push(deleteButton)
+      }
+      return AllButton
+    }
   }
 ]
 const attackValue = ref(3)
@@ -103,12 +165,89 @@ async function createTask() {
       console.log(res)
     })
   } catch (c) {
-    message.error(error);
+    message.error(c);
   }
   showModal.value = false
   await getFileList()
 }
 
+async function removeTask(id) {
+  dialog.warning({
+    title: '警告',
+    content: '确认删除?',
+    positiveText: '确定',
+    onPositiveClick: async () => {
+      try {
+        await DeleteTask(id)
+      } catch (e) {
+        message.error(e);
+      }
+      await getFileList()
+    }
+  })
+
+}
+
+async function startTask(id) {
+  dialog.success({
+    title: '确认',
+    content: '确认启动任务?',
+    positiveText: '确定',
+    onPositiveClick: async () => {
+      try {
+        await StartTask(id)
+      } catch (e) {
+        message.error(e);
+      }
+      await getFileList()
+    }
+  })
+
+}
+
+async function stopTask(id) {
+  dialog.error({
+    title: '确认',
+    content: '确认暂停任务?',
+    positiveText: '确定',
+    onPositiveClick: async () => {
+      try {
+        await StopTask(id)
+      } catch (e) {
+        message.error(e);
+      }
+      await getFileList()
+    }
+  })
+
+}
+
+async function restartTask(id) {
+
+  dialog.success({
+    title: '确认',
+    content: '确认重启任务?',
+    positiveText: '确定',
+    onPositiveClick: async () => {
+      try {
+        await RestartTask(id)
+      } catch (e) {
+        message.error(e);
+      }
+      await getFileList()
+    }
+  })
+}
+
+
+// 定时器
+let intervalId = null;
+onMounted(() => {
+  intervalId = setInterval(getFileList, 2000); // 每2秒调用一次
+});
+onBeforeUnmount(() => {
+  clearInterval(intervalId); // 清除定时器，防止内存泄漏
+});
 getFileList()
 </script>
 
@@ -123,7 +262,7 @@ getFileList()
                 <n-data-table
                     :columns="columns"
                     :data=file.tasks
-                    :bordered="false"
+                    :bordered="true"
                 />
               </n-collapse-item>
             </n-collapse>

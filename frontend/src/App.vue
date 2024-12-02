@@ -5,13 +5,15 @@ import Layout from "./components/layout.vue";
 
 <template>
   <div id="app">
-    <n-modal-provider>
-      <n-message-provider>
-        <n-notification-provider>
-          <layout></layout>
-        </n-notification-provider>
-      </n-message-provider>
-    </n-modal-provider>
+    <n-dialog-provider>
+      <n-modal-provider>
+        <n-message-provider>
+          <n-notification-provider>
+            <layout></layout>
+          </n-notification-provider>
+        </n-message-provider>
+      </n-modal-provider>
+    </n-dialog-provider>
   </div>
 </template>
 

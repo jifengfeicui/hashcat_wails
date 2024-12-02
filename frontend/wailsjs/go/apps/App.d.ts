@@ -9,8 +9,18 @@ export function ConfirmAddFile(arg1:string):Promise<void>;
 
 export function CreatTask(arg1:request.CreateTask):Promise<void>;
 
+export function DeleteTask(arg1:number):Promise<void>;
+
+export function GetDictContent():Promise<string>;
+
 export function GetFileList():Promise<Array<model.SourceHashFile>>;
 
 export function Greet(arg1:string):Promise<string>;
 
 export function RemoveFile(arg1:number):Promise<void>;
+
+export function RestartTask(arg1:number):Promise<void>;
+
+export function StartTask(arg1:number):Promise<void>;
+
+export function StopTask(arg1:number):Promise<void>;

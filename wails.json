@@ -6,7 +6,8 @@
   "frontend:dev:watcher": "yarn run dev",
   "frontend:dev:serverUrl": "http://localhost:3000",
   "author": {
-    "name": "cyh",
-    "email": "317279541@qq.com"
+    "name": "jifengfeicui",
+    "email": "xxx@xx.com"
   }
+
 }

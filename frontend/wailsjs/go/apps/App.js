@@ -14,6 +14,14 @@ export function CreatTask(arg1) {
   return window['go']['apps']['App']['CreatTask'](arg1);
 }
 
+export function DeleteTask(arg1) {
+  return window['go']['apps']['App']['DeleteTask'](arg1);
+}
+
+export function GetDictContent() {
+  return window['go']['apps']['App']['GetDictContent']();
+}
+
 export function GetFileList() {
   return window['go']['apps']['App']['GetFileList']();
 }
@@ -24,4 +32,16 @@ export function Greet(arg1) {
 
 export function RemoveFile(arg1) {
   return window['go']['apps']['App']['RemoveFile'](arg1);
+}
+
+export function RestartTask(arg1) {
+  return window['go']['apps']['App']['RestartTask'](arg1);
+}
+
+export function StartTask(arg1) {
+  return window['go']['apps']['App']['StartTask'](arg1);
+}
+
+export function StopTask(arg1) {
+  return window['go']['apps']['App']['StopTask'](arg1);
 }
