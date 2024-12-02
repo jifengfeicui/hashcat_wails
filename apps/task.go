@@ -98,8 +98,11 @@ func (a *App) StartTask(id int) error {
 		First(&task).Error; err != nil {
 		return err
 	}
-	go hashcat.InitTask(int(task.ID))
-	go hashcat.HT.StartSession(task.CMD)
+	go func() {
+		hashcat.InitTask(int(task.ID))
+		hashcat.HT.StartSession(task.CMD)
+	}()
+
 	db.Model(&task).Update("status", model.TaskStatusRunning)
 	return nil
 }
@@ -118,8 +121,10 @@ func (a *App) StopTask(id int) error {
 }
 
 func (a *App) RestartTask(id int) error {
-	hashcat.InitTask(id)
-	go hashcat.HT.ReStartSession()
+	go func() {
+		hashcat.InitTask(id)
+		hashcat.HT.ReStartSession()
+	}()
 	db := global.DB
 	var task model.HashCatTask
 	if err := db.Where("id = ?", id).

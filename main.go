@@ -74,7 +74,7 @@ func main() {
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
-				Title:   "naive_test2",
+				Title:   "hashcat desktop",
 				Message: "",
 				Icon:    icon,
 			},

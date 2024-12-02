@@ -5,6 +5,6 @@ func Initialize() {
 	//ChangeWorkingDir()
 	CreateMkdirall()
 	InitLogger()
-	Viper()
+	//Viper()
 	initOrm()
 }
